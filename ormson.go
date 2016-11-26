@@ -1,24 +1,38 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"ormson/generater"
 	oio "ormson/io"
+	"os"
 )
 
+var g string
+
 func main() {
-	steps()
+	if len(os.Args) < 2 {
+		fmt.Println("Input Like: ormson -g Test")
+		return
+	}
+
+	flag.StringVar(&g, "g", "empty", "输入表名")
+	flag.Parse()
+	steps(g)
+	fmt.Println("---------------------")
+	fmt.Println("Generate Complete !!")
+	fmt.Println("---------------------")
 }
 
-func steps() {
+func steps(name string) {
 	//生成文件夹 Controllers Services Steps Storages Atoms
 	initDir()
 	//处理生成
-	generater.HandleGenerateAtoms("Admin")
-	generater.HandleGenerateStorages("Admin")
-	generater.HandleGenerateSteps("Admin")
-	generater.HandleGenerateServices("Admin")
-	generater.HandleGenerateControllers("Admin")
+	generater.HandleGenerateAtoms(name)
+	generater.HandleGenerateStorages(name)
+	generater.HandleGenerateSteps(name)
+	generater.HandleGenerateServices(name)
+	generater.HandleGenerateControllers(name)
 	generater.HandleGenerateCore()
 }
 
