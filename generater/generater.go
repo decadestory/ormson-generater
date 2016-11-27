@@ -3,21 +3,15 @@ package generater
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
-var n1 = "\r\n"
-var n2 = "\r\n\r\n"
-var nt = "\t"
-var ns = "OrmTest"
+//HandleGenerateAtoms ...
+func HandleGenerateAtoms(name, ns string) {
+	var fileName = "./dist/" + ns + ".Atoms/" + name + ".cs"
+	var code = strings.Replace(templeteAtoms(), "{ns}", ns, -1)
+	code = strings.Replace(code, "{name}", name, -1)
 
-func HandleGenerateAtoms(name string) {
-	var fileName = "./dist/Atoms/" + name + ".cs"
-	var code = "using System;" + n1
-	code += "using Orm.Son.Mapper;" + n2
-	code += "namespace " + ns + ".Atoms" + n1 + "{" + n1
-	code += nt + "public class " + name + n1 + nt + "{" + n1
-	code += nt + "}" + n1
-	code += "}"
 	f, err := os.Create(fileName)
 	defer f.Close()
 	if err != nil {
@@ -26,16 +20,12 @@ func HandleGenerateAtoms(name string) {
 	f.WriteString(code)
 }
 
-func HandleGenerateStorages(name string) {
-	var fileName = "./dist/Storages/" + name + "Storage.cs"
-	var code = "using System;" + n1
-	code += "using System.Collections.Generic;" + n1
-	code += "using System.Data.SqlClient;" + n1
-	code += "using Orm.Son.Core;" + n2
-	code += "namespace " + ns + ".Storages" + n1 + "{" + n1
-	code += nt + "public class " + name + "Storage" + n1 + nt + "{" + n1
-	code += nt + "}" + n1
-	code += "}"
+//HandleGenerateStorages ...
+func HandleGenerateStorages(name, ns string) {
+	var fileName = "./dist/" + ns + ".Storages/" + name + "Storage.cs"
+	var code = strings.Replace(templeteStorages(), "{ns}", ns, -1)
+	code = strings.Replace(code, "{name}", name, -1)
+
 	f, err := os.Create(fileName)
 	defer f.Close()
 	if err != nil {
@@ -44,17 +34,12 @@ func HandleGenerateStorages(name string) {
 	f.WriteString(code)
 }
 
-func HandleGenerateSteps(name string) {
-	var fileName = "./dist/Steps/" + name + "Step.cs"
-	var code = "using System;" + n1
-	code += "using System.Collections.Generic;" + n1
-	code += "using System.Data.SqlClient;" + n1
-	code += "using Orm.Son.Core;" + n1
-	code += "using " + ns + ".Storages;" + n2
-	code += "namespace " + ns + ".Steps" + n1 + "{" + n1
-	code += nt + "public class " + name + "Step" + n1 + nt + "{" + n1
-	code += nt + "}" + n1
-	code += "}"
+//HandleGenerateSteps ..
+func HandleGenerateSteps(name, ns string) {
+	var fileName = "./dist/" + ns + ".Steps/" + name + "Step.cs"
+	var code = strings.Replace(templeteSteps(), "{ns}", ns, -1)
+	code = strings.Replace(code, "{name}", name, -1)
+
 	f, err := os.Create(fileName)
 	defer f.Close()
 	if err != nil {
@@ -63,16 +48,12 @@ func HandleGenerateSteps(name string) {
 	f.WriteString(code)
 }
 
-func HandleGenerateServices(name string) {
-	var fileName = "./dist/Services/" + name + "Service.cs"
-	var code = "using System;" + n1
-	code += "using System.Collections.Generic;" + n1
-	code += "using System.Data.SqlClient;" + n1
-	code += "using " + ns + ".Steps;" + n2
-	code += "namespace " + ns + ".Services" + n1 + "{" + n1
-	code += nt + "public class " + name + "Service" + n1 + nt + "{" + n1
-	code += nt + "}" + n1
-	code += "}"
+//HandleGenerateServices ...
+func HandleGenerateServices(name, ns string) {
+	var fileName = "./dist/" + ns + ".Services/" + name + "Service.cs"
+	var code = strings.Replace(templeteServices(), "{ns}", ns, -1)
+	code = strings.Replace(code, "{name}", name, -1)
+
 	f, err := os.Create(fileName)
 	defer f.Close()
 	if err != nil {
@@ -81,16 +62,12 @@ func HandleGenerateServices(name string) {
 	f.WriteString(code)
 }
 
-func HandleGenerateControllers(name string) {
-	var fileName = "./dist/Controllers/" + name + "Controller.cs"
-	var code = "using System;" + n1
-	code += "using System.Collections.Generic;" + n1
-	code += "using System.Data.SqlClient;" + n1
-	code += "using " + ns + ".Services;" + n2
-	code += "namespace " + ns + ".Controllers" + n1 + "{" + n1
-	code += nt + "public class " + name + "Controller" + n1 + nt + "{" + n1
-	code += nt + "}" + n1
-	code += "}"
+//HandleGenerateControllers ...
+func HandleGenerateControllers(name, ns string) {
+	var fileName = "./dist/" + ns + ".Web/Controllers/" + name + "Controller.cs"
+	var code = strings.Replace(templeteControllers(), "{ns}", ns, -1)
+	code = strings.Replace(code, "{name}", name, -1)
+
 	f, err := os.Create(fileName)
 	defer f.Close()
 	if err != nil {
@@ -99,20 +76,134 @@ func HandleGenerateControllers(name string) {
 	f.WriteString(code)
 }
 
-func HandleGenerateCore() {
-	var fileName = "./dist/Storages/StorageCore/DbCtx.cs"
-	var code = "using System;" + n1
-	code += "using Orm.Son.Core;" + n2
-	code += "namespace " + ns + ".Storages.StorageCore" + n1 + "{" + n1
-	code += nt + "public class DbCtx : SonConnection" + n1 + nt + "{" + n1
-	code += nt + nt + "public DbCtx() : base(\"connString\")" + n1 + nt + nt + "{" + n1
-	code += nt + nt + "}" + n1
-	code += nt + "}" + n1
-	code += "}"
+//HandleGenerateCore ...
+func HandleGenerateCore(ns string) {
+	var fileName = "./dist/" + ns + ".Storages/StorageCore/DbCtx.cs"
+	var code = strings.Replace(templeteCore(), "{ns}", ns, -1)
+
 	f, err := os.Create(fileName)
 	defer f.Close()
 	if err != nil {
 		fmt.Println(err)
 	}
 	f.WriteString(code)
+}
+
+func templeteStorages() string {
+	return `using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using Orm.Son.Core;
+using {ns}.Atoms;
+using {ns}.Storages.StorageCore;
+
+namespace {ns}.Storages
+{
+	public class {name}Storage
+	{
+		public int Add({name} entity)
+		{
+			using (var db = new DbCtx())
+			{
+                return db.Insert(entity);
+			}
+		}
+
+        public int Del(int id)
+        {
+            using (var db = new DbCtx())
+            {
+                return db.Delete<{name}>(id);
+            }
+        }
+
+        public int Edit({name} entity)
+        {
+            using (var db = new DbCtx())
+            {
+                return db.Update(entity);
+            }
+        }
+
+        public {name} GetById(int id)
+        {
+            using (var db = new DbCtx())
+            {
+                return db.Find<{name}>(id);
+            }
+        }
+    }
+}`
+
+}
+
+func templeteAtoms() string {
+	return `using System;
+using Orm.Son.Mapper;
+
+namespace {ns}.Atoms
+{
+	public class {name}
+	{
+	}
+}`
+}
+
+func templeteSteps() string {
+	return `using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using Orm.Son.Core;
+using {ns}.Storages;
+
+namespace {ns}.Steps
+{
+	public class {name}Step
+	{
+	}
+}`
+}
+
+func templeteServices() string {
+	return `using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using {ns}.Steps;
+
+namespace {ns}.Services
+{
+	public class {name}Service
+	{
+	}
+}`
+}
+
+func templeteControllers() string {
+	return `using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Web.Mvc;
+using {ns}.Services;
+
+namespace {ns}.Controllers 
+{
+	public class {name}Controller : Controller
+	{
+	}
+}`
+}
+
+func templeteCore() string {
+	return `using System;
+using Orm.Son.Core;
+
+namespace {ns}.Storages.StorageCore
+{
+	public class DbCtx : SonConnection
+	{
+		public DbCtx() : base("connString")
+		{
+		}
+	}
+}`
 }
