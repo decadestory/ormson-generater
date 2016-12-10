@@ -2,6 +2,7 @@ package generater
 
 import (
 	"fmt"
+	"ormson/dbstruct"
 	"os"
 	"strings"
 )
@@ -11,6 +12,8 @@ func HandleGenerateAtoms(name, ns string) {
 	var fileName = "./dist/" + ns + ".Atoms/" + name + ".cs"
 	var code = strings.Replace(templeteAtoms(), "{ns}", ns, -1)
 	code = strings.Replace(code, "{name}", name, -1)
+	var text = dbstruct.GetAtomLines(name)
+	code = strings.Replace(code, "{text}", text, -1)
 
 	f, err := os.Create(fileName)
 	defer f.Close()
@@ -145,6 +148,7 @@ namespace {ns}.Atoms
 {
 	public class {name}
 	{
+{text}
 	}
 }`
 }

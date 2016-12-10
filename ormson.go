@@ -3,10 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
+	_ "go-mssqldb"
 	"ormson/generater"
 	oio "ormson/io"
 	"os"
 	"strings"
+
+	_ "github.com/Unknwon/goconfig"
 )
 
 var ns string
@@ -31,6 +34,10 @@ func main() {
 	for _, v := range params {
 		steps(v)
 	}
+
+	// ns = "TestSpace"
+	// steps("Role")
+
 	fmt.Println("---------------------")
 	fmt.Println("Generate Complete !!")
 	fmt.Println("---------------------")
