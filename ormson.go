@@ -35,6 +35,9 @@ func main() {
 		steps(v)
 	}
 
+	generater.HandleGenerateLibs(ns)
+	generater.HandleGenerateUtils(ns)
+
 	// ns = "TestSpace"
 	// steps("Role")
 
@@ -53,6 +56,8 @@ func steps(name string) {
 	generater.HandleGenerateServices(name, ns)
 	generater.HandleGenerateControllers(name, ns)
 	generater.HandleGenerateCore(ns)
+	generater.HandleGenerateMolecules(name, ns)
+
 	fmt.Println(name, ",Generate Success")
 }
 
@@ -71,11 +76,14 @@ func initDir() {
 
 	dirPaths := map[string]string{
 		"Controller":  distWeb + "Controllers/",
+		"Util":        distWeb + "Utils/",
 		"Service":     dist + ns + ".Services/",
 		"Step":        dist + ns + ".Steps/",
 		"Storage":     dist + ns + ".Storages/",
 		"Atom":        dist + ns + ".Atoms/",
 		"StorageCore": dist + ns + ".Storages/StorageCore/",
+		"Libs":        dist + ns + ".Libs/",
+		"Molecule":    dist + ns + ".Molecules/",
 	}
 
 	for _, v := range dirPaths {
