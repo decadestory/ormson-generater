@@ -36,6 +36,7 @@ func main() {
 	}
 
 	generater.HandleGenerateLibs(ns)
+	generater.HandleGenerateLibForPage(ns)
 	generater.HandleGenerateUtils(ns)
 
 	// ns = "TestSpace"

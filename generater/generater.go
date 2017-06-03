@@ -121,6 +121,19 @@ func HandleGenerateLibs(ns string) {
 	f.WriteString(code)
 }
 
+//HandleGenerateLibForPage ...
+func HandleGenerateLibForPage(ns string) {
+	var fileName = "./dist/" + ns + ".Libs/PageResult.cs"
+	var code = strings.Replace(templeteLibForPage(), "{ns}", ns, -1)
+
+	f, err := os.Create(fileName)
+	defer f.Close()
+	if err != nil {
+		fmt.Println(err)
+	}
+	f.WriteString(code)
+}
+
 //HandleGenerateUtils ...
 func HandleGenerateUtils(ns string) {
 	var fileName = "./dist/" + ns + ".Web/Utils/ApiExceptionAttribute.cs"
@@ -268,6 +281,20 @@ func templeteLibs() string {
 `
 }
 
+func templeteLibForPage() string {
+	return `using System.Collections.Generic;
+    
+namespace {ns}.Libs
+{
+    public class PageResult<T>
+    {
+        public int Total { get; set; }
+        public List<T> DataList { get; set; }
+    }
+}
+`
+}
+
 func templeteMolecules() string {
 	return `using System;
 
@@ -325,11 +352,12 @@ namespace {ns}.Storages
             }
         }
 
-        public Tuple<List<{name}Molecule>, int> FindPage(int page)
+        public Tuple<List<{name}Molecule>, int> FindPage(int page, int pageSize,string keyWord)
         {
             using (var db = new DbCtx())
             {
-                return db.FindPage<{name}, {name}Molecule>(t => t.Id > 0, t => t.Id, page, 30, true);
+                if (keyWord == null) keyWord = "";
+                return db.FindPage<{name}, {name}Molecule>(t => t.Id > 0, t => t.Id, page, pageSize, true);
             }
         }
     }
@@ -385,6 +413,8 @@ namespace {ns}.Services
         public DataResult<string> Add({name}Molecule model)
         {
             var entity = EntityMapper.Mapper<{name}Molecule, {name}>(model);
+            entity.AddTime = DateTime.Now;
+            entity.EditTime = DateTime.Now;
             return store.Add(entity) > 0
                 ? new DataResult<string>(true,"添加成功")
                 : new DataResult<string>(false, "添加失败");
@@ -400,6 +430,7 @@ namespace {ns}.Services
         public DataResult<string> Edit({name}Molecule model)
         {
             var entity = EntityMapper.Mapper<{name}Molecule, {name}>(model);
+            entity.EditTime = DateTime.Now;
             return store.Edit(entity) > 0
                 ? new DataResult<string>(true, "更新成功")
                 : new DataResult<string>(false, "更新失败");
@@ -412,10 +443,13 @@ namespace {ns}.Services
             return new DataResult<{name}Molecule>(entity);
         }
 
-        public DataResult<List<{name}Molecule>> FindPage(int page)
+        public DataResult<PageResult<{name}Molecule>> FindPage(int page,int pageSize,string keyWord)
         {
-            var reslut = store.FindPage(page);
-            return new DataResult<List<{name}Molecule>>(reslut.Item1);
+            var reslut = store.FindPage(page, pageSize, keyWord);
+            return new DataResult<PageResult<{name}Molecule>>
+            {
+                Data = new PageResult<{name}Molecule> { Total = reslut.Item2, DataList = reslut.Item1 }
+            };
         }
     }
 }`
@@ -461,9 +495,9 @@ namespace {ns}.Web.Controllers
         }
 
 		[HttpGet,ApiException]
-        public DataResult<List<{name}Molecule>> FindPage(int page)
+        public DataResult<PageResult<{name}Molecule>> FindPage(int id = 1,int pageSize=10, string keyWord="")
         {
-            return service.FindPage(page);
+            return service.FindPage(id, pageSize, keyWord);
         }
     }
 }`
